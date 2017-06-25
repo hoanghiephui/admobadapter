@@ -11,20 +11,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
-buildscript {
-    repositories {
-        jcenter()
-    }
-    dependencies {
-        classpath 'com.android.tools.build:gradle:2.3.1'
-    }
-}
 apply plugin: 'com.android.library'
-
-repositories {
-    jcenter()
-}
 
 android {
     compileSdkVersion 25
@@ -35,7 +22,6 @@ android {
         targetSdkVersion 25
         versionCode 1
         versionName "1.0"
-        multiDexEnabled true
     }
 
     buildTypes {
@@ -59,7 +45,6 @@ dependencies {
     testCompile "org.powermock:powermock-module-junit4-rule:1.6.5"
     testCompile "org.powermock:powermock-api-mockito:1.6.5"
     testCompile "org.powermock:powermock-classloading-xstream:1.6.5"
-    // https://mvnrepository.com/artifact/org.jetbrains/annotations
-    compile group: 'org.jetbrains', name: 'annotations', version: '15.0'
-
+    // https://mvnrepository.com/artifact/org.jetbrains/annotations-java5
+    compile "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
 }
