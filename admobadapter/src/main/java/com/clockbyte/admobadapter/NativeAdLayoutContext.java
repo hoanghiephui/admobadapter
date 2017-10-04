@@ -44,8 +44,8 @@ public abstract class NativeAdLayoutContext {
 
     public abstract void bind(NativeAdView nativeAdView, NativeAd nativeAd);
 
-    public NativeAdView inflateView(ViewGroup root) throws IllegalArgumentException{
-        if(root == null) throw new IllegalArgumentException("root should be not null");
+    public NativeAdView inflateView(ViewGroup root) throws IllegalArgumentException {
+        if (root == null) throw new IllegalArgumentException("root should be not null");
         // Inflate a layout and add it to the parent ViewGroup.
         LayoutInflater inflater = (LayoutInflater) root.getContext()
                 .getSystemService(Context.LAYOUT_INFLATER_SERVICE);

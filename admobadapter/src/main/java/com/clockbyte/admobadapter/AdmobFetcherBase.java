@@ -37,12 +37,14 @@ public abstract class AdmobFetcherBase {
     protected AtomicBoolean lockFetch = new AtomicBoolean();
 
     protected ArrayList<String> testDeviceId = new ArrayList<String>();
+
     /*
     *Gets a test device ID. Normally you don't have to set it
      */
     public ArrayList<String> getTestDeviceIds() {
         return testDeviceId;
     }
+
     /*
     *Sets a test device ID. Normally you don't have to set it
      */
@@ -68,6 +70,7 @@ public abstract class AdmobFetcherBase {
     public synchronized int getFetchedAdsCount() {
         return mNoOfFetchedAds;
     }
+
     /**
      * Gets the number of ads that have been fetched and are currently being fetched
      *
@@ -105,7 +108,7 @@ public abstract class AdmobFetcherBase {
     /**
      * Frees all weak refs and collections
      */
-    public void release(){
+    public void release() {
         destroyAllAds();
         mContext.clear();
     }
@@ -116,7 +119,7 @@ public abstract class AdmobFetcherBase {
     protected void onAdsCountChanged() {
         final Context context = mContext.get();
         //context may be null if activity is destroyed
-        if(context != null) {
+        if (context != null) {
             new Handler(context.getMainLooper()).post(new Runnable() {
                 @Override
                 public void run() {
@@ -130,15 +133,15 @@ public abstract class AdmobFetcherBase {
     /**
      * Notifies all registered {@link AdmobListener} on a loaded ad.
      */
-    protected void onAdLoaded(final int adIdx) {
+    protected void onAdLoaded(final int adIdx, final Object adPayload) {
         final Context context = mContext.get();
         //context may be null if activity is destroyed
-        if(context != null) {
+        if (context != null) {
             new Handler(context.getMainLooper()).post(new Runnable() {
                 @Override
                 public void run() {
                     for (AdmobListener listener : mAdNativeListeners)
-                        listener.onAdLoaded(adIdx);
+                        listener.onAdLoaded(adIdx, adPayload);
                 }
             });
         }
@@ -150,7 +153,7 @@ public abstract class AdmobFetcherBase {
     protected void onAdFailed(final int adIdx, final int errorCode, final Object adPayload) {
         final Context context = mContext.get();
         //context may be null if activity is destroyed
-        if(context != null) {
+        if (context != null) {
             for (AdmobListener listener : mAdNativeListeners)
                 listener.onAdFailed(adIdx, errorCode, adPayload);
         }
@@ -174,10 +177,12 @@ public abstract class AdmobFetcherBase {
         /**
          * Raised when the ad has loaded. Adapters that implement this class
          * should notify their data views that the dataset has changed.
+         *
          * @param adIdx the index of ad block which state was changed.
-         * See {@link AdmobAdapterCalculator} for methods to transform {@param adIdx} to adapter wrapper's indices
+         *              See {@link AdmobAdapterCalculator} for methods to transform {@param adIdx} to adapter wrapper's indices
          */
-        void onAdLoaded(int adIdx);
+        void onAdLoaded(int adIdx, Object adPayload);
+
         /**
          * Raised when the number of ads have changed. Adapters that implement this class
          * should notify their data views that the dataset has changed.
@@ -186,10 +191,11 @@ public abstract class AdmobFetcherBase {
 
         /**
          * Raised when the ad has failed to load.
-         * @param adIdx the index of ad block which state was changed.
+         *
+         * @param adIdx     the index of ad block which state was changed.
          * @param adPayload filled with some specific for current platform payload
-         * (for Admob Native Express it is {@link NativeExpressAdView})
-         * See {@link AdmobAdapterCalculator} for methods to transform {@param adIdx} to adapter wrapper's indices
+         *                  (for Admob Native Express it is {@link NativeExpressAdView})
+         *                  See {@link AdmobAdapterCalculator} for methods to transform {@param adIdx} to adapter wrapper's indices
          */
         void onAdFailed(int adIdx, int errorCode, Object adPayload);
     }

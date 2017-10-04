@@ -20,8 +20,6 @@ import android.widget.AbsListView;
 import com.clockbyte.admobadapter.expressads.ExpressAdPreset;
 import com.google.android.gms.ads.AdSize;
 import com.google.android.gms.ads.NativeExpressAdView;
-import com.google.android.gms.ads.VideoController;
-import com.google.android.gms.ads.VideoOptions;
 
 public class AdViewHelper {
 
@@ -34,8 +32,8 @@ public class AdViewHelper {
                 adSize.getHeightInPixels(context)));
 
         //set video options
-        if(expressAdPreset.getVideoOptions() != null)
-        adView.setVideoOptions(expressAdPreset.getVideoOptions());
+        if (expressAdPreset.getVideoOptions() != null)
+            adView.setVideoOptions(expressAdPreset.getVideoOptions());
 
         return adView;
     }

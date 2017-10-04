@@ -27,7 +27,7 @@ public class AdPresetCyclingList extends ArrayList<ExpressAdPreset> {
 
     private int currentIdx = -1;
 
-    public AdPresetCyclingList(){
+    public AdPresetCyclingList() {
         super();
     }
 
@@ -44,7 +44,7 @@ public class AdPresetCyclingList extends ArrayList<ExpressAdPreset> {
      * ID should be active, please check it in your Admob's account.
      */
     public ExpressAdPreset get() {
-        if(size() == 0) return null;
+        if (size() == 0) return null;
         if (size() == 1) return get(0);
         currentIdx = ++currentIdx % size();
         return get(currentIdx);
@@ -52,6 +52,7 @@ public class AdPresetCyclingList extends ArrayList<ExpressAdPreset> {
 
     /**
      * Tries to add an item to collection if it is valid {@link ExpressAdPreset#isValid()}
+     *
      * @return true if item was added, false - otherwise
      */
     @Override
@@ -62,13 +63,14 @@ public class AdPresetCyclingList extends ArrayList<ExpressAdPreset> {
 
     /**
      * Tries to add items to collection if valid {@link ExpressAdPreset#isValid()}
+     *
      * @return true if items were added, false - otherwise
      */
     @Override
     public boolean addAll(Collection<? extends ExpressAdPreset> c) {
         ArrayList<ExpressAdPreset> lst = new ArrayList<ExpressAdPreset>();
         for (ExpressAdPreset eap : c) {
-            if(eap!=null && eap.isValid())
+            if (eap != null && eap.isValid())
                 lst.add(eap);
         }
         return super.addAll(lst);

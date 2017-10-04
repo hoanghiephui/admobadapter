@@ -82,7 +82,7 @@ public class AdapterWrapperObserver extends RecyclerView.AdapterDataObserver {
         if (itemCount == 1)
             adapterWrapper.notifyItemMoved(fromWrapperIndexFirst, 1);
         else for (int i = 0; i < wrapperItemCount; itemCount++)
-                adapterWrapper.notifyItemMoved(fromWrapperIndexFirst + i, toWrapperIndexFirst + i);
+            adapterWrapper.notifyItemMoved(fromWrapperIndexFirst + i, toWrapperIndexFirst + i);
     }
 
     @Override

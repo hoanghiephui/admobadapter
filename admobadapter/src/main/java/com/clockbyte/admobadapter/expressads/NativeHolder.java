@@ -23,12 +23,12 @@ import android.view.ViewGroup;
 
 public class NativeHolder extends RecyclerView.ViewHolder {
 
-    public NativeHolder(ViewGroup adViewWrapper){
+    public NativeHolder(ViewGroup adViewWrapper) {
         super(adViewWrapper);
     }
 
     public ViewGroup getAdViewWrapper() {
-        return (ViewGroup)itemView;
+        return (ViewGroup) itemView;
     }
 
 }

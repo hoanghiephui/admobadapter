@@ -24,20 +24,20 @@ import com.google.android.gms.ads.formats.NativeAdView;
 import com.google.android.gms.ads.formats.NativeContentAd;
 import com.google.android.gms.ads.formats.NativeContentAdView;
 
-public class ContentAdLayoutContext extends NativeAdLayoutContext{
+public class ContentAdLayoutContext extends NativeAdLayoutContext {
 
-    public static ContentAdLayoutContext getDefault(){
-        return new ContentAdLayoutContext(R.layout.adcontentlistview_item);
-    }
-
-    public ContentAdLayoutContext(int mAdLayoutId){
+    public ContentAdLayoutContext(int mAdLayoutId) {
         setAdLayoutId(mAdLayoutId);
     }
 
+    public static ContentAdLayoutContext getDefault() {
+        return new ContentAdLayoutContext(R.layout.adcontentlistview_item);
+    }
+
     @Override
-    public void bind(NativeAdView nativeAdView, NativeAd nativeAd) throws ClassCastException{
+    public void bind(NativeAdView nativeAdView, NativeAd nativeAd) throws ClassCastException {
         if (nativeAdView == null || nativeAd == null) return;
-        if(!(nativeAd instanceof NativeContentAd) || !(nativeAdView instanceof NativeContentAdView))
+        if (!(nativeAd instanceof NativeContentAd) || !(nativeAdView instanceof NativeContentAdView))
             throw new ClassCastException();
 
         NativeContentAd ad = (NativeContentAd) nativeAd;
@@ -54,7 +54,7 @@ public class ContentAdLayoutContext extends NativeAdLayoutContext{
         adView.setBodyView(tvDescription);
 
         ImageView ivLogo = (ImageView) nativeAdView.findViewById(R.id.ivLogo);
-        if(ad.getLogo()!=null)
+        if (ad.getLogo() != null)
             ivLogo.setImageDrawable(ad.getLogo().getDrawable());
         adView.setLogoView(ivLogo);
 

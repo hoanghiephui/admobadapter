@@ -14,10 +14,7 @@
 
 package com.clockbyte.admobadapter;
 
-import android.content.Context;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -27,20 +24,20 @@ import com.google.android.gms.ads.formats.NativeAdView;
 import com.google.android.gms.ads.formats.NativeAppInstallAd;
 import com.google.android.gms.ads.formats.NativeAppInstallAdView;
 
-public class InstallAppAdLayoutContext extends NativeAdLayoutContext{
+public class InstallAppAdLayoutContext extends NativeAdLayoutContext {
 
-    public static InstallAppAdLayoutContext getDefault(){
-        return new InstallAppAdLayoutContext(R.layout.adinstalllistview_item);
-    }
-
-    public InstallAppAdLayoutContext(int mAdLayoutId){
+    public InstallAppAdLayoutContext(int mAdLayoutId) {
         setAdLayoutId(mAdLayoutId);
     }
 
+    public static InstallAppAdLayoutContext getDefault() {
+        return new InstallAppAdLayoutContext(R.layout.adinstalllistview_item);
+    }
+
     @Override
-    public void bind(NativeAdView nativeAdView, NativeAd nativeAd) throws ClassCastException{
+    public void bind(NativeAdView nativeAdView, NativeAd nativeAd) throws ClassCastException {
         if (nativeAdView == null || nativeAd == null) return;
-        if(!(nativeAd instanceof NativeAppInstallAd) || !(nativeAdView instanceof NativeAppInstallAdView))
+        if (!(nativeAd instanceof NativeAppInstallAd) || !(nativeAdView instanceof NativeAppInstallAdView))
             throw new ClassCastException();
 
         NativeAppInstallAd ad = (NativeAppInstallAd) nativeAd;
@@ -57,7 +54,7 @@ public class InstallAppAdLayoutContext extends NativeAdLayoutContext{
         adView.setBodyView(tvDescription);
 
         ImageView ivLogo = (ImageView) adView.findViewById(R.id.ivLogo);
-        if(ad.getIcon()!=null)
+        if (ad.getIcon() != null)
             ivLogo.setImageDrawable(ad.getIcon().getDrawable());
         adView.setIconView(ivLogo);
 

@@ -45,6 +45,7 @@ public class AdViewWrappingStrategy extends AdViewWrappingStrategyBase {
     /**
      * This method can be overriden to wrap the created ad view with a custom {@link ViewGroup}.<br/>
      * For example if you need to wrap the ad with your custom CardView
+     *
      * @return The wrapper {@link ViewGroup} for ad, by default {@link NativeExpressAdView} ad would be wrapped with a CardView which is returned by this method
      */
     @Override

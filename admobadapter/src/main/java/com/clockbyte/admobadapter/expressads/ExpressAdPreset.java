@@ -31,34 +31,36 @@ public class ExpressAdPreset {
     private AdSize adSize;
     private VideoOptions videoOptions;
 
-    public ExpressAdPreset(){
+    public ExpressAdPreset() {
         this.adUnitId = UNIT_ID_DEFAULT_EXPRESS;
         this.adSize = SIZE_DEFAULT_EXPRESS;
     }
 
-    public ExpressAdPreset(String adUnitId){
+    public ExpressAdPreset(String adUnitId) {
         this();
-        if(!TextUtils.isEmpty(adUnitId))
+        if (!TextUtils.isEmpty(adUnitId))
             this.adUnitId = adUnitId;
     }
 
-    public ExpressAdPreset(String adUnitId, AdSize adSize){
+    public ExpressAdPreset(String adUnitId, AdSize adSize) {
         this(adUnitId);
-        if(adSize != null)
+        if (adSize != null)
             this.adSize = adSize;
     }
 
-    public String getAdUnitId(){
+    public String getAdUnitId() {
         return this.adUnitId;
     }
-    public void setAdUnitId(String adUnitId){
+
+    public void setAdUnitId(String adUnitId) {
         this.adUnitId = adUnitId;
     }
 
-    public AdSize getAdSize(){
+    public AdSize getAdSize() {
         return this.adSize;
     }
-    public void setAdSize(AdSize adSize){
+
+    public void setAdSize(AdSize adSize) {
         this.adSize = adSize;
     }
 
@@ -66,11 +68,12 @@ public class ExpressAdPreset {
     public VideoOptions getVideoOptions() {
         return videoOptions;
     }
+
     public void setVideoOptions(VideoOptions videoOptions) {
         this.videoOptions = videoOptions;
     }
 
-    public boolean isValid(){
+    public boolean isValid() {
         return !TextUtils.isEmpty(this.adUnitId);
     }
 
