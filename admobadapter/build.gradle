@@ -11,6 +11,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
+
 apply plugin: 'com.android.library'
 
 android {
@@ -34,10 +36,10 @@ android {
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
-    compile 'com.android.support:appcompat-v7:26.0.1'
-    compile 'com.android.support:recyclerview-v7:26.0.1'
-    compile 'com.android.support:cardview-v7:26.0.1'
-    compile 'com.google.firebase:firebase-ads:11.2.0'
+    implementation 'com.android.support:appcompat-v7:26.1.0'
+    implementation 'com.android.support:recyclerview-v7:26.1.0'
+    implementation 'com.android.support:cardview-v7:26.1.0'
+    implementation 'com.google.firebase:firebase-ads:11.4.0'
 
     testCompile 'junit:junit:4.12'
     testCompile 'org.mockito:mockito-core:2.2.26'
@@ -45,6 +47,4 @@ dependencies {
     testCompile "org.powermock:powermock-module-junit4-rule:1.6.5"
     testCompile "org.powermock:powermock-api-mockito:1.6.5"
     testCompile "org.powermock:powermock-classloading-xstream:1.6.5"
-    // https://mvnrepository.com/artifact/org.jetbrains/annotations-java5
-    compile "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
 }

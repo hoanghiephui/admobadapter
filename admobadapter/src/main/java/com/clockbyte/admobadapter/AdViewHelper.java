@@ -30,6 +30,11 @@ public class AdViewHelper {
         adView.setAdUnitId(expressAdPreset.getAdUnitId());
         adView.setLayoutParams(new AbsListView.LayoutParams(AbsListView.LayoutParams.MATCH_PARENT,
                 adSize.getHeightInPixels(context)));
+
+        //set video options
+        if (expressAdPreset.getVideoOptions() != null)
+            adView.setVideoOptions(expressAdPreset.getVideoOptions());
+
         return adView;
     }
 }

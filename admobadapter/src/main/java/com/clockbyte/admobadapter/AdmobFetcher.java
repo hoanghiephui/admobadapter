@@ -28,14 +28,11 @@ import com.google.android.gms.ads.formats.NativeAppInstallAd;
 import com.google.android.gms.ads.formats.NativeContentAd;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.EnumSet;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
-public class AdmobFetcher extends AdmobFetcherBase{
-
-    private final String TAG = AdmobFetcher.class.getCanonicalName();
+public class AdmobFetcher extends AdmobFetcherBase {
 
     /**
      * Maximum number of ads to prefetch.
@@ -45,19 +42,21 @@ public class AdmobFetcher extends AdmobFetcherBase{
      * Maximum number of times to try fetch an ad after failed attempts.
      */
     private static final int MAX_FETCH_ATTEMPT = 4;
-
+    private final String TAG = AdmobFetcher.class.getCanonicalName();
+    private final List<String> mAdmobReleaseUnitIds = new ArrayList<>();
     private int mFetchingAdsCnt = 0;
     private AdLoader adLoader;
     private List<NativeAd> mPrefetchedAdList = new ArrayList<NativeAd>();
     private SparseArray adMapAtIndex = new SparseArray();
-
     private EnumSet<EAdType> adTypeToFetch = EnumSet.allOf(EAdType.class);
+
     /**
      * Gets enumset which sets which of ad types this Fetcher should load
      */
     public EnumSet<EAdType> getAdTypeToFetch() {
         return adTypeToFetch;
     }
+
     /**
      * Gets enumset which sets which of ad types this Fetcher should load
      */
@@ -74,7 +73,7 @@ public class AdmobFetcher extends AdmobFetcherBase{
      */
     public synchronized NativeAd getAdForIndex(final int index) {
         NativeAd adNative = null;
-        if(index >= 0)
+        if (index >= 0)
             adNative = (NativeAd) adMapAtIndex.get(index);
 
         if (adNative == null && mPrefetchedAdList.size() > 0) {
@@ -126,9 +125,9 @@ public class AdmobFetcher extends AdmobFetcherBase{
 
     /**
      * Destroys all the ads in Map to refresh it with new one
-     * */
+     */
     public synchronized void clearMapAds() {
-          adMapAtIndex.clear();
+        adMapAtIndex.clear();
         mFetchingAdsCnt = mPrefetchedAdList.size();
     }
 
@@ -140,7 +139,7 @@ public class AdmobFetcher extends AdmobFetcherBase{
 
         if (context != null) {
             Log.i(TAG, "Fetching Ad now");
-            if(lockFetch.getAndSet(true))
+            if (lockFetch.getAndSet(true))
                 return;
             mFetchingAdsCnt++;
             adLoader.loadAd(getAdRequest()); //Fetching the ads item
@@ -194,11 +193,15 @@ public class AdmobFetcher extends AdmobFetcherBase{
         return mContext.get().getResources().getString(R.string.test_admob_unit_id);
     }
 
+    private String getReleaseUnitId() {
+        return mAdmobReleaseUnitIds.size() > 0 ? mAdmobReleaseUnitIds.get(0) : null;
+    }
+
     /**
      * Subscribing to the native ads events
      */
     protected synchronized void setupAds() {
-        String unitId = getDefaultUnitId();
+        String unitId = getReleaseUnitId() != null ? getReleaseUnitId() : getDefaultUnitId();
         AdLoader.Builder adloaderBuilder = new AdLoader.Builder(mContext.get(), unitId)
                 .withAdListener(new AdListener() {
                     @Override
@@ -209,26 +212,27 @@ public class AdmobFetcher extends AdmobFetcherBase{
                         mFetchFailCount++;
                         mFetchingAdsCnt--;
                         ensurePrefetchAmount();
+                        onAdFailed(mPrefetchedAdList.size(), errorCode, null);
                     }
                 })
                 .withNativeAdOptions(new NativeAdOptions.Builder()
                         // Methods in the NativeAdOptions.Builder class can be
                         // used here to specify individual options settings.
                         .build());
-        if(getAdTypeToFetch().contains(EAdType.ADVANCED_INSTALLAPP))
+        if (getAdTypeToFetch().contains(EAdType.ADVANCED_INSTALLAPP))
             adloaderBuilder.forAppInstallAd(new NativeAppInstallAd.OnAppInstallAdLoadedListener() {
-                    @Override
-                    public void onAppInstallAdLoaded(NativeAppInstallAd appInstallAd) {
-                        onAdFetched(appInstallAd);
-                    }
-                });
-        if(getAdTypeToFetch().contains(EAdType.ADVANCED_CONTENT))
+                @Override
+                public void onAppInstallAdLoaded(NativeAppInstallAd appInstallAd) {
+                    onAdFetched(appInstallAd);
+                }
+            });
+        if (getAdTypeToFetch().contains(EAdType.ADVANCED_CONTENT))
             adloaderBuilder.forContentAd(new NativeContentAd.OnContentAdLoadedListener() {
-                    @Override
-                    public void onContentAdLoaded(NativeContentAd contentAd) {
-                        onAdFetched(contentAd);
-                    }
-                });
+                @Override
+                public void onContentAdLoaded(NativeContentAd contentAd) {
+                    onAdFetched(contentAd);
+                }
+            });
 
         adLoader = adloaderBuilder.build();
     }
@@ -241,12 +245,19 @@ public class AdmobFetcher extends AdmobFetcherBase{
         int index = -1;
         if (canUseThisAd(adNative)) {
             mPrefetchedAdList.add(adNative);
-            index = mPrefetchedAdList.size()-1;
+            index = mPrefetchedAdList.size() - 1;
             mNoOfFetchedAds++;
         }
         lockFetch.set(false);
         mFetchFailCount = 0;
         ensurePrefetchAmount();
-        notifyObserversOfAdSizeChange(index);
+        onAdLoaded(index, null);
+    }
+
+    public void setReleaseUnitIds(Collection<String> admobReleaseUnitIds) {
+        if (admobReleaseUnitIds.size() > 1)
+            throw new RuntimeException("Currently only supports one unit id.");
+
+        mAdmobReleaseUnitIds.addAll(admobReleaseUnitIds);
     }
 }

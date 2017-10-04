@@ -17,11 +17,8 @@ package com.clockbyte.admobadapter.expressads;
 
 import android.content.Context;
 import android.os.Handler;
-import android.support.v7.widget.RecyclerView;
+import android.support.annotation.MainThread;
 import android.util.Log;
-import android.view.View;
-import android.view.ViewParent;
-import android.widget.ListView;
 
 import com.clockbyte.admobadapter.AdPresetCyclingList;
 import com.clockbyte.admobadapter.AdmobFetcherBase;
@@ -36,25 +33,22 @@ import java.util.List;
 
 public class AdmobFetcherExpress extends AdmobFetcherBase {
 
-    private final String TAG = AdmobFetcherExpress.class.getCanonicalName();
-
     /**
      * Maximum number of ads to prefetch.
      */
     public static final int PREFETCHED_ADS_SIZE = 2;
-
     /**
      * Maximum number of times to try fetch an ad after failed attempts.
      */
-    private static final int MAX_FETCH_ATTEMPT = 4;
+    public static final int MAX_FETCH_ATTEMPT = 4;
+    private final String TAG = AdmobFetcherExpress.class.getCanonicalName();
+    private List<NativeExpressAdView> mPrefetchedAds = new ArrayList<>();
+    private AdPresetCyclingList mAdPresetCyclingList = new AdPresetCyclingList();
 
-    public AdmobFetcherExpress(Context context){
+    public AdmobFetcherExpress(Context context) {
         super();
         mContext = new WeakReference<>(context);
     }
-
-    private List<NativeExpressAdView> mPrefetchedAds = new ArrayList<>();
-    private AdPresetCyclingList mAdPresetCyclingList = new AdPresetCyclingList();
 
     /*
 * Gets next ad preset for Admob banners from FIFO .
@@ -77,15 +71,19 @@ public class AdmobFetcherExpress extends AdmobFetcherBase {
 * ID should be active, please check it in your Admob's account.
  */
     public void setAdPresets(Collection<ExpressAdPreset> adPresets) {
-        Collection<ExpressAdPreset> mAdPresets = adPresets==null||adPresets.size() == 0
+        Collection<ExpressAdPreset> mAdPresets = adPresets == null || adPresets.size() == 0
                 ? Collections.singletonList(ExpressAdPreset.DEFAULT)
-                :adPresets;
+                : adPresets;
         mAdPresetCyclingList.clear();
         mAdPresetCyclingList.addAll(mAdPresets);
     }
 
-    public int getAdPresetsCount(){
+    public int getAdPresetsCount() {
         return this.mAdPresetCyclingList.size();
+    }
+
+    public ExpressAdPreset getAdPresetSingleOr(ExpressAdPreset defaultValue) {
+        return this.mAdPresetCyclingList.size() == 1 ? this.mAdPresetCyclingList.get() : defaultValue;
     }
 
     /**
@@ -96,7 +94,7 @@ public class AdmobFetcherExpress extends AdmobFetcherBase {
      * @see #getFetchedAdsCount()
      */
     public synchronized NativeExpressAdView getAdForIndex(int adPos) {
-        if(adPos >= 0 && mPrefetchedAds.size() > adPos)
+        if (adPos >= 0 && mPrefetchedAds.size() > adPos)
             return mPrefetchedAds.get(adPos);
         return null;
     }
@@ -104,15 +102,18 @@ public class AdmobFetcherExpress extends AdmobFetcherBase {
     /**
      * Fetches a new native ad.
      */
+    @MainThread
     protected synchronized void fetchAd(final NativeExpressAdView adView) {
-        if(mFetchFailCount > MAX_FETCH_ATTEMPT)
+        if (mFetchFailCount > MAX_FETCH_ATTEMPT) {
+            Log.d(TAG, "fetchAd: return");
             return;
+        }
 
         Context context = mContext.get();
 
         if (context != null) {
             Log.i(TAG, "Fetching Ad now");
-            new Handler(context.getMainLooper()).post(new Runnable() {
+            new Handler().post(new Runnable() {
                 @Override
                 public void run() {
                     adView.loadAd(getAdRequest()); //Fetching the ads item
@@ -126,13 +127,14 @@ public class AdmobFetcherExpress extends AdmobFetcherBase {
 
     /**
      * Subscribing to the native ads events
+     *
      * @param adView
      */
     protected synchronized void setupAd(final NativeExpressAdView adView) {
-        if(mFetchFailCount > MAX_FETCH_ATTEMPT)
+        if (mFetchFailCount > MAX_FETCH_ATTEMPT)
             return;
 
-        if(!mPrefetchedAds.contains(adView))
+        if (!mPrefetchedAds.contains(adView))
             mPrefetchedAds.add(adView);
         adView.setAdListener(new AdListener() {
             @Override
@@ -140,7 +142,10 @@ public class AdmobFetcherExpress extends AdmobFetcherBase {
                 super.onAdFailedToLoad(errorCode);
                 // Handle the failure by logging, altering the UI, etc.
                 onFailedToLoad(adView, errorCode);
+                //reload
+                fetchAd(adView);
             }
+
             @Override
             public void onAdLoaded() {
                 super.onAdLoaded();
@@ -151,33 +156,29 @@ public class AdmobFetcherExpress extends AdmobFetcherBase {
 
     /**
      * A handler for received native ads
+     *
      * @param adView
      */
     private synchronized void onFetched(NativeExpressAdView adView) {
         Log.i(TAG, "onAdFetched");
         mFetchFailCount = 0;
         mNoOfFetchedAds++;
-        notifyObserversOfAdSizeChange(mNoOfFetchedAds - 1);
+        onAdLoaded(mNoOfFetchedAds - 1, adView);
     }
 
     /**
      * A handler for failed native ads
+     *
      * @param adView
      */
     private synchronized void onFailedToLoad(NativeExpressAdView adView, int errorCode) {
         Log.i(TAG, "onAdFailedToLoad " + errorCode);
         mFetchFailCount++;
-        mNoOfFetchedAds = Math.max(mNoOfFetchedAds - 1, -1);
+        mNoOfFetchedAds = Math.max(mNoOfFetchedAds - 1, 0);
         //Since Fetch Ad is only called once without retries
         //hide ad row / rollback its count if still not added to list
         mPrefetchedAds.remove(adView);
-        notifyObserversOfAdSizeChange(mNoOfFetchedAds - 1);
-        ViewParent parent = adView.getParent();
-        //parent is not empty and not an instance of ListView/RecyclerView
-        if(parent!=null && !(parent instanceof RecyclerView
-                        || parent instanceof ListView))
-            ((View) adView.getParent()).setVisibility(View.GONE);
-        else adView.setVisibility(View.GONE);
+        onAdFailed(mNoOfFetchedAds - 1, errorCode, adView);
     }
 
     @Override
@@ -188,7 +189,7 @@ public class AdmobFetcherExpress extends AdmobFetcherBase {
     @Override
     public synchronized void destroyAllAds() {
         super.destroyAllAds();
-        for(NativeExpressAdView ad:mPrefetchedAds){
+        for (NativeExpressAdView ad : mPrefetchedAds) {
             ad.destroy();
         }
         mPrefetchedAds.clear();
