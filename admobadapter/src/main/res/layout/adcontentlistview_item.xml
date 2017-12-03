@@ -22,6 +22,8 @@
         android:orientation="vertical">
 
         <TextView
+            android:layout_marginRight="16dp"
+            android:layout_marginLeft="16dp"
             android:id="@+id/tvHeader"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
@@ -30,6 +32,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="2dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="16dp"
             android:orientation="horizontal">
 
             <ImageView
@@ -70,6 +74,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="2dp"
+            android:backgroundTint="#039be5"
             android:paddingLeft="10dp"
             android:paddingRight="10dp" />
     </LinearLayout>
