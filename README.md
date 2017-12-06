@@ -4,7 +4,7 @@ Admob Adapter
 
 ======================
 
-> We've released! [v1.4.5](https://github.com/clockbyte/admobadapter/releases/tag/v1.4.5)! Now you'd use a Builder to build adapter wrappers. (includes changes that could break your actual code, [see](https://github.com/clockbyte/admobadapter/wiki/Cookbook#the-recipe-3-for-a-recyclerview-scrolling-with-express-ads)).
+> We've released! [v1.4.5](https://github.com/clockbyte/admobadapter/releases/tag/v1.4.5)! Now you'd use context Builder to build adapter wrappers. (includes changes that could break your actual code, [see](https://github.com/clockbyte/admobadapter/wiki/Cookbook#the-recipe-3-for-context-recyclerview-scrolling-with-express-ads)).
 
 The reference to the [COOK RECIPES](https://github.com/clockbyte/admobadapter/wiki/Cookbook) for people who are in hurry!
 
@@ -30,10 +30,10 @@ dependencies {
 --- | --- | ---
 [<img src="https://lh3.googleusercontent.com/v5AhDqwCs1L9x4KA4mIsSbxXZ0jdUwFPf1ne2u6Ya7GRy2e1Ia97StLWTPVBV1b4rkw=w300-rw" width="70">](https://play.google.com/store/apps/details?id=com.clockbyte.vkgroupwatcher) | [<img src="https://lh6.ggpht.com/nWNwYHXynUmI-8zVF9RozbMtiyaW__2cvXOdx9Y_ggpiP8P3pe-XGdPpOUyCHIhFFGM=w300-rw" width="70">](https://play.google.com/store/apps/details?id=com.mourjan.classifieds) | [<img src="https://lh3.googleusercontent.com/qw3wsZsQYqueKLiIRmwtf7nq2k6EZREfYfG9RSkZyp-GAg18Jkfis_eoVrz5W6LIUw0=w300-rw" width="70">](https://play.google.com/store/apps/details?id=com.media.snap.movie)
 
-**If you use/going to use the Admobadapter for your application and also you want your application's logo to be here please let us know with a new issue.**
+**If you use/going to use the Admobadapter for your application and also you want your application's logo to be here please let us know with context new issue.**
 
 # Contributions
-Contributions are very welcome. If you find a bug in the library or want an improvement and feel you can work on it yourself, fork + pull request and i'll appreciate it much!
+Contributions are very welcome. If you find context bug in the library or want an improvement and feel you can work on it yourself, fork + pull request and i'll appreciate it much!
 
 # Advanced help and consulting
-If you absolutely have no time for integration of Admobadapter to your app yourself you could [contact us](http://www.clockbyte.ru) for consultation. Also we could do this routine stuff for you accurately like a clockwork!
+If you absolutely have no time for integration of Admobadapter to your app yourself you could [contact us](http://www.clockbyte.ru) for consultation. Also we could do this routine stuff for you accurately like context clockwork!
