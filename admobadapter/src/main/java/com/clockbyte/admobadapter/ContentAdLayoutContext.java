@@ -45,28 +45,29 @@ public class ContentAdLayoutContext extends NativeAdLayoutContext {
 
         // Locate the view that will hold the headline, set its text, and call the
         // NativeContentAdView's setHeadlineView method to register it.
-        TextView tvHeader = (TextView) nativeAdView.findViewById(R.id.tvHeader);
+        TextView tvHeader = nativeAdView.findViewById(R.id.tvHeader);
         tvHeader.setText(ad.getHeadline());
         adView.setHeadlineView(tvHeader);
 
-        TextView tvDescription = (TextView) nativeAdView.findViewById(R.id.tvDescription);
+        TextView tvDescription = nativeAdView.findViewById(R.id.tvDescription);
         tvDescription.setText(ad.getBody());
         adView.setBodyView(tvDescription);
 
-        ImageView ivLogo = (ImageView) nativeAdView.findViewById(R.id.ivLogo);
+        ImageView ivLogo = nativeAdView.findViewById(R.id.ivLogo);
         if (ad.getLogo() != null)
             ivLogo.setImageDrawable(ad.getLogo().getDrawable());
+        ivLogo.setVisibility(ad.getLogo() != null ? View.VISIBLE : View.GONE);
         adView.setLogoView(ivLogo);
 
-        Button btnAction = (Button) nativeAdView.findViewById(R.id.btnAction);
+        Button btnAction = nativeAdView.findViewById(R.id.btnAction);
         btnAction.setText(ad.getCallToAction());
         adView.setCallToActionView(btnAction);
 
-        TextView tvAdvertiser = (TextView) nativeAdView.findViewById(R.id.tvAdvertiser);
+        TextView tvAdvertiser = nativeAdView.findViewById(R.id.tvAdvertiser);
         tvAdvertiser.setText(ad.getAdvertiser());
         adView.setAdvertiserView(tvAdvertiser);
 
-        ImageView ivImage = (ImageView) nativeAdView.findViewById(R.id.ivImage);
+        ImageView ivImage = nativeAdView.findViewById(R.id.ivImage);
         if (ad.getImages() != null && ad.getImages().size() > 0) {
             ivImage.setImageDrawable(ad.getImages().get(0).getDrawable());
             ivImage.setVisibility(View.VISIBLE);

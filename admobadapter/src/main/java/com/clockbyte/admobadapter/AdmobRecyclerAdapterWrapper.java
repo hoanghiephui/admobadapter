@@ -20,6 +20,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.ViewGroup;
 
 import com.clockbyte.admobadapter.expressads.NativeHolder;
+import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.formats.NativeAd;
 import com.google.android.gms.ads.formats.NativeAdView;
 import com.google.android.gms.ads.formats.NativeAppInstallAd;
@@ -309,9 +310,13 @@ public class AdmobRecyclerAdapterWrapper
         mContext = context;
 
         adFetcher = new AdmobFetcher();
-        if (testDevicesId != null)
+        if (testDevicesId != null) {
             for (String testId : testDevicesId)
                 adFetcher.addTestDeviceId(testId);
+        } else {
+            adFetcher.addTestDeviceId(AdRequest.DEVICE_ID_EMULATOR);
+        }
+
         if (admobReleaseUnitIds != null)
             adFetcher.setReleaseUnitIds(admobReleaseUnitIds);
         adFetcher.setAdTypeToFetch(adTypesToShow == null || adTypesToShow.isEmpty()
