@@ -438,7 +438,7 @@ public class AdmobBannerAdapterWrapper extends BaseAdapter implements AdmobFetch
     }
 
     @Override
-    public void onAdLoaded(int adIdx) {
+    public void onAdLoaded(int adIdx, Object adPayload) {
         notifyDataSetChanged();
     }
 

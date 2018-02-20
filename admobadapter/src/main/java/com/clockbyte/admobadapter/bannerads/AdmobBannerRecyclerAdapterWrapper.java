@@ -440,7 +440,7 @@ public class AdmobBannerRecyclerAdapterWrapper
     }
 
     @Override
-    public void onAdLoaded(int adIdx) {
+    public void onAdLoaded(int adIdx, Object adPayload) {
         //raise ad's neighbour item changed.
         // cheap, quick and dirty solution to avoid ad's redraw and flickering.
         int pos = getAdapterCalculator().translateAdToWrapperPosition(adIdx);

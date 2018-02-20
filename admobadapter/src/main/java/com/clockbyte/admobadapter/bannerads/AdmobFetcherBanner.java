@@ -156,7 +156,7 @@ public class AdmobFetcherBanner extends AdmobFetcherBase {
         Log.i(TAG, "onAdFetched");
         mFetchFailCount = 0;
         mNoOfFetchedAds++;
-        onAdLoaded(mNoOfFetchedAds - 1);
+        onAdLoaded(mNoOfFetchedAds - 1, adView);
     }
 
     /**
