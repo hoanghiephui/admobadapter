@@ -12,23 +12,23 @@
  * limitations under the License.
  */
 
-package com.clockbyte.admobadapter.expressads;
+package com.clockbyte.admobadapter.bannerads;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.ViewGroup;
 
 /**
- * Created by FILM on 28.10.2016.
+ * Created by L4grange on 14/02/2018
  */
 
-public class NativeHolder extends RecyclerView.ViewHolder {
+public class BannerHolder extends RecyclerView.ViewHolder {
 
-    public NativeHolder(ViewGroup adViewWrapper) {
+    public BannerHolder(ViewGroup adViewWrapper){
         super(adViewWrapper);
     }
 
     public ViewGroup getAdViewWrapper() {
-        return (ViewGroup) itemView;
+        return (ViewGroup)itemView;
     }
 
 }

@@ -24,6 +24,7 @@ import android.view.ViewParent;
 import android.widget.BaseAdapter;
 import android.widget.ListView;
 
+import com.clockbyte.admobadapter.AdPreset;
 import com.clockbyte.admobadapter.AdViewHelper;
 import com.clockbyte.admobadapter.AdmobAdapterCalculator;
 import com.clockbyte.admobadapter.AdmobFetcherBase;
@@ -36,52 +37,47 @@ import java.util.Collections;
 /**
  * Adapter that has common functionality for any adapters that need to show ads in-between
  * other data.
+ * @deprecated Use banners instead
  */
+@Deprecated
 public class AdmobExpressAdapterWrapper extends BaseAdapter implements AdmobFetcherBase.AdmobListener {
 
-    private static final int VIEW_TYPE_COUNT = 1;
-    private static final int VIEW_TYPE_AD_EXPRESS = 0;
-    private final static int DEFAULT_NO_OF_DATA_BETWEEN_ADS = 10;
-    private final static int DEFAULT_LIMIT_OF_ADS = 3;
     private final String TAG = AdmobExpressAdapterWrapper.class.getCanonicalName();
+
     private BaseAdapter mAdapter;
-    private AdmobFetcherExpress adFetcher;
-    private Context mContext;
-    private AdmobAdapterCalculator AdapterCalculator = new AdmobAdapterCalculator();
-    private AdViewWrappingStrategyBase AdViewWrappingStrategy = new AdViewWrappingStrategy();
-
-    public AdmobExpressAdapterWrapper() {
-    }
-
-    public static Builder builder(@NonNull Context context) {
-        return new AdmobExpressAdapterWrapper().new Builder(context);
-    }
 
     public BaseAdapter getAdapter() {
         return mAdapter;
     }
 
+    private AdmobFetcherExpress adFetcher;
+    private Context mContext;
+    private AdmobAdapterCalculator AdapterCalculator = new AdmobAdapterCalculator();
     /*
     * Gets an object which incapsulates transformation of the source and ad blocks indices
     */
-    public AdmobAdapterCalculator getAdapterCalculator() {
-        return AdapterCalculator;
-    }
+    public AdmobAdapterCalculator getAdapterCalculator(){return AdapterCalculator;}
 
+    private AdViewWrappingStrategyBase AdViewWrappingStrategy = new AdViewWrappingStrategy();
     /**
      * Gets an object which incapsulates a wrapping logic for AdViews
      */
-    public AdViewWrappingStrategyBase getAdViewWrappingStrategy() {
-        return AdViewWrappingStrategy;
-    }
+    public AdViewWrappingStrategyBase getAdViewWrappingStrategy(){return AdViewWrappingStrategy;}
+
+
+    private static final int VIEW_TYPE_COUNT = 1;
+    private static final int VIEW_TYPE_AD_EXPRESS = 0;
+
+    private final static int DEFAULT_NO_OF_DATA_BETWEEN_ADS = 10;
+    private final static int DEFAULT_LIMIT_OF_ADS = 3;
 
     /**
      * Gets the number of presets for ads that have been predefined by user (objects which contain adsize, unitIds etc).
      *
      * @return the number of ads that have been fetched
      */
-    public int getAdPresetsCount() {
-        return adFetcher != null ? this.adFetcher.getAdPresetsCount() : 0;
+    public int getAdPresetsCount(){
+        return adFetcher!=null? this.adFetcher.getAdPresetsCount(): 0;
     }
 
     /**
@@ -93,16 +89,17 @@ public class AdmobExpressAdapterWrapper extends BaseAdapter implements AdmobFetc
         return adFetcher.getFetchedAdsCount();
     }
 
+
     /**
      * Gets the number of ads have been fetched so far + currently fetching ads
      *
      * @return the number of already fetched ads + currently fetching ads
      */
-    public int getFetchingAdsCount() {
+    public int getFetchingAdsCount(){
         return adFetcher.getFetchingAdsCount();
     }
 
-    public int getViewTypeAdExpress() {
+    public int getViewTypeAdExpress(){
         return mAdapter.getViewTypeCount() + VIEW_TYPE_AD_EXPRESS;
     }
 
@@ -115,7 +112,6 @@ public class AdmobExpressAdapterWrapper extends BaseAdapter implements AdmobFetc
     public int getNoOfDataBetweenAds() {
         return AdapterCalculator.getNoOfDataBetweenAds();
     }
-
     /*
     * Sets the number of your data items between ad blocks, by default it equals to 10.
     * You should set it according to the Admob's policies and rules which says not to
@@ -129,7 +125,6 @@ public class AdmobExpressAdapterWrapper extends BaseAdapter implements AdmobFetc
     public int getFirstAdIndex() {
         return AdapterCalculator.getFirstAdIndex();
     }
-
     /*
     * Sets the first ad block index (zero-based) in the adapter, by default it equals to 0
     */
@@ -151,15 +146,162 @@ public class AdmobExpressAdapterWrapper extends BaseAdapter implements AdmobFetc
         AdapterCalculator.setLimitOfAds(mLimitOfAds);
     }
 
+    public AdmobExpressAdapterWrapper(){}
+
+    public static Builder builder(@NonNull Context context) {
+        return new AdmobExpressAdapterWrapper().new Builder(context);
+    }
+
+    public class Builder{
+        private Builder(Context context){
+            mContext = context;
+
+            AdapterCalculator.setNoOfDataBetweenAds(DEFAULT_NO_OF_DATA_BETWEEN_ADS);
+            AdapterCalculator.setLimitOfAds(DEFAULT_LIMIT_OF_ADS);
+
+            adFetcher = new AdmobFetcherExpress(mContext);
+            adFetcher.addListener(AdmobExpressAdapterWrapper.this);
+        }
+
+        /**
+         * Sets the first ad block index (zero-based) in the adapter, by default it equals to 0
+         */
+        public Builder setFirstAdIndex(int firstAdIndex) {
+            AdapterCalculator.setFirstAdIndex(firstAdIndex);
+            return this;
+        }
+
+        /**
+         * Sets the max count of ad blocks per dataset, by default it equals to 3 (according to the Admob's policies and rules)
+         */
+        public Builder setLimitOfAds(int mLimitOfAds) {
+            AdapterCalculator.setLimitOfAds(mLimitOfAds);
+            return this;
+        }
+
+        /**
+         * Sets the number of your data items between ad blocks, by default it equals to 10.
+         * You should set it according to the Admob's policies and rules which says not to
+         * display more than one ad block at the visible part of the screen
+         * so you should choose this parameter carefully and according to your item's height and screen resolution of a target devices
+         */
+        public Builder setNoOfDataBetweenAds(int mNoOfDataBetweenAds) {
+            AdapterCalculator.setNoOfDataBetweenAds(mNoOfDataBetweenAds);
+            return this;
+        }
+
+        /**
+         * Sets a devices ID to test ads interaction.
+         * You could pass null but it's better to set ids for all your test devices
+         * including emulators. for emulator just use the
+         * @see {AdRequest.DEVICE_ID_EMULATOR}
+         */
+        public Builder setTestDeviceIds(@NonNull String[] testDevicesId){
+            adFetcher.getTestDeviceIds().clear();
+            for (String testId: testDevicesId)
+                adFetcher.addTestDeviceId(testId);
+            return this;
+        }
+
+        /**
+         * Sets a collection of ad presets ( object which contains unit ID and AdSize for banner).
+         * It works like cycling FIFO (first in = first out, cycling from end to start).
+         * Each ad block will get one from the queue.
+         * If the desired count of ad blocks is greater than this collection size
+         * then it will go again to the first item and iterate as much as it required.
+         * ID should be active, please check it in your Admob's account.
+         * Be careful: don't pass release unit id without setting the testDevicesId if you still haven't deployed a Release.
+         * Otherwise your Admob account could be banned
+         */
+        public Builder setAdPresets(@NonNull Collection<AdPreset> adPresets){
+            adFetcher.setAdPresets(adPresets);
+            return this;
+        }
+
+        /**
+         * Sets a single unit ID for each ad block.
+         * If you are testing ads please don't set it to the release id
+         */
+        public Builder setSingleAdUnitId(@NonNull String admobUnitId){
+            AdPreset adPreset = adFetcher.getAdPresetSingleOr(new AdPreset());
+            adPreset.setAdUnitId(admobUnitId);
+            adFetcher.setAdPresets(Collections.singletonList(adPreset));
+            return this;
+        }
+
+        /**
+         * Sets a single ad size for each ad block. By default it equals to AdSize(AdSize.FULL_WIDTH, 150);
+         */
+        public Builder setSingleAdSize(@NonNull AdSize adSize){
+            AdPreset adPreset = adFetcher.getAdPresetSingleOr(new AdPreset(null, null));
+            adPreset.setAdSize(adSize);
+            adFetcher.setAdPresets(Collections.singletonList(adPreset));
+            return this;
+        }
+
+        /**
+         * Injects an object which incapsulates transformation of the source and ad blocks indices. You could override calculations
+         * by inheritance from {@link AdmobAdapterCalculator} class
+         */
+        public Builder setAdapterCalculator(@NonNull AdmobAdapterCalculator adapterCalculator){
+            AdapterCalculator = adapterCalculator;
+            return setNoOfDataBetweenAds(DEFAULT_NO_OF_DATA_BETWEEN_ADS).setLimitOfAds(DEFAULT_LIMIT_OF_ADS);
+        }
+
+        /**
+         * Injects an object which incapsulates a wrapping logic for AdViews. You could inject your own implementation
+         * by inheritance from {@link AdViewWrappingStrategyBase} class
+         */
+        public Builder setAdViewWrappingStrategy(@NonNull AdViewWrappingStrategyBase adViewWrappingStrategy){
+            AdViewWrappingStrategy = adViewWrappingStrategy;
+            return this;
+        }
+
+        /**
+         * Injects an object which incapsulates transformation of the source and ad blocks indices. You could override calculations
+         * by inheritance of {@link AdmobAdapterCalculator} class
+         */
+        public Builder setAdapterCalculator(@NonNull AdmobAdapterCalculator adapterCalculator, int noOfDataBetweenAds, int limitOfAds, int firstAdIndex){
+            AdapterCalculator = adapterCalculator;
+            return setNoOfDataBetweenAds(noOfDataBetweenAds).setLimitOfAds(limitOfAds).setFirstAdIndex(firstAdIndex);
+        }
+
+        /**
+         * Sets underlying adapter with your data collection.
+         * If you want to inject your implementation of {@link AdmobAdapterCalculator} please set it before this call
+         */
+        public Builder setAdapter(BaseAdapter adapter) {
+            mAdapter = adapter;
+            mAdapter.registerDataSetObserver(new DataSetObserver() {
+                @Override
+                public void onChanged() {
+                    notifyDataSetChanged();
+                }
+
+                @Override
+                public void onInvalidated() {
+                    notifyDataSetInvalidated();
+                }
+            });
+            return this;
+        }
+
+        public AdmobExpressAdapterWrapper build(){
+            if(adFetcher.getAdPresetsCount() == 0)
+                adFetcher.setAdPresets(null);
+            prefetchAds(AdmobFetcherExpress.PREFETCHED_ADS_SIZE);
+            return AdmobExpressAdapterWrapper.this;
+        }
+    }
+
     /**
-     * Creates N instances {@link NativeExpressAdView} from the next N taken instances {@link ExpressAdPreset}
+     * Creates N instances {@link NativeExpressAdView} from the next N taken instances {@link AdPreset}
      * Will start async prefetch of ad blocks to use its further
-     *
      * @return last created NativeExpressAdView
      */
-    private NativeExpressAdView prefetchAds(int cntToPrefetch) {
+    private NativeExpressAdView prefetchAds(int cntToPrefetch){
         NativeExpressAdView last = null;
-        for (int i = 0; i < cntToPrefetch; i++) {
+        for (int i = 0; i < cntToPrefetch; i++){
             final NativeExpressAdView item = AdViewHelper.getExpressAdView(mContext, adFetcher.takeNextAdPreset());
             adFetcher.setupAd(item);
             //50 ms throttling to prevent a high-load of server
@@ -176,19 +318,20 @@ public class AdmobExpressAdapterWrapper extends BaseAdapter implements AdmobFetc
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        if (getItemViewType(position) == getViewTypeAdExpress()) {
+        if(getItemViewType(position) == getViewTypeAdExpress()) {
             int adPos = AdapterCalculator.getAdIndex(position);
             NativeExpressAdView ad = adFetcher.getAdForIndex(adPos);
             if (ad == null)
                 ad = prefetchAds(1);
-            if (convertView == null) {
+            if(convertView == null) {
                 ViewGroup wrapper = AdViewWrappingStrategy.getAdViewWrapper(parent);
                 //make sure the AdView for this position doesn't already have a parent of a different recycled NativeExpressHolder.
                 if (ad.getParent() == null)
                     wrapper.addView(ad);
                 return wrapper;
-            } else {
-                ViewGroup wrapper = (ViewGroup) convertView;
+            }
+            else{
+                ViewGroup wrapper = (ViewGroup)convertView;
                 AdViewWrappingStrategy.recycleAdViewWrapper(wrapper, ad);
                 //make sure the AdView for this position doesn't already have a parent of a different recycled NativeExpressHolder.
                 if (ad.getParent() != null)
@@ -196,7 +339,8 @@ public class AdmobExpressAdapterWrapper extends BaseAdapter implements AdmobFetc
                 AdViewWrappingStrategy.addAdViewToWrapper(wrapper, ad);
                 return convertView;
             }
-        } else {
+        }
+        else{
             int origPos = AdapterCalculator.getOriginalContentPosition(position,
                     adFetcher.getFetchingAdsCount(), mAdapter.getCount());
             return mAdapter.getView(origPos, convertView, parent);
@@ -267,8 +411,8 @@ public class AdmobExpressAdapterWrapper extends BaseAdapter implements AdmobFetc
         }
     }
 
-    private void checkNeedFetchAd(int position) {
-        if (AdapterCalculator.hasToFetchAd(position, adFetcher.getFetchingAdsCount()))
+    private void checkNeedFetchAd(int position){
+        if(AdapterCalculator.hasToFetchAd(position, adFetcher.getFetchingAdsCount()))
             prefetchAds(1);
     }
 
@@ -281,12 +425,12 @@ public class AdmobExpressAdapterWrapper extends BaseAdapter implements AdmobFetc
     /**
      * Free all resources, weak-refs
      */
-    public void release() {
+    public void release(){
         adFetcher.release();
     }
 
     @Override
-    public void onAdLoaded(int adIdx, Object adPayload) {
+    public void onAdLoaded(int adIdx) {
         notifyDataSetChanged();
     }
 
@@ -297,10 +441,10 @@ public class AdmobExpressAdapterWrapper extends BaseAdapter implements AdmobFetc
 
     @Override
     public void onAdFailed(int adIdx, int errorCode, Object adPayload) {
-        NativeExpressAdView adView = (NativeExpressAdView) adPayload;
+        NativeExpressAdView adView = (NativeExpressAdView)adPayload;
         if (adView != null) {
             ViewParent parent = adView.getParent();
-            if (parent == null || parent instanceof ListView)
+            if(parent == null || parent instanceof ListView)
                 adView.setVisibility(View.GONE);
             else {
                 while (parent.getParent() != null && !(parent.getParent() instanceof ListView))
@@ -309,149 +453,6 @@ public class AdmobExpressAdapterWrapper extends BaseAdapter implements AdmobFetc
             }
         }
         notifyDataSetChanged();
-    }
-
-    public class Builder {
-        private Builder(Context context) {
-            mContext = context;
-
-            AdapterCalculator.setNoOfDataBetweenAds(DEFAULT_NO_OF_DATA_BETWEEN_ADS);
-            AdapterCalculator.setLimitOfAds(DEFAULT_LIMIT_OF_ADS);
-
-            adFetcher = new AdmobFetcherExpress(mContext);
-            adFetcher.addListener(AdmobExpressAdapterWrapper.this);
-        }
-
-        /**
-         * Sets the first ad block index (zero-based) in the adapter, by default it equals to 0
-         */
-        public Builder setFirstAdIndex(int firstAdIndex) {
-            AdapterCalculator.setFirstAdIndex(firstAdIndex);
-            return this;
-        }
-
-        /**
-         * Sets the max count of ad blocks per dataset, by default it equals to 3 (according to the Admob's policies and rules)
-         */
-        public Builder setLimitOfAds(int mLimitOfAds) {
-            AdapterCalculator.setLimitOfAds(mLimitOfAds);
-            return this;
-        }
-
-        /**
-         * Sets the number of your data items between ad blocks, by default it equals to 10.
-         * You should set it according to the Admob's policies and rules which says not to
-         * display more than one ad block at the visible part of the screen
-         * so you should choose this parameter carefully and according to your item's height and screen resolution of a target devices
-         */
-        public Builder setNoOfDataBetweenAds(int mNoOfDataBetweenAds) {
-            AdapterCalculator.setNoOfDataBetweenAds(mNoOfDataBetweenAds);
-            return this;
-        }
-
-        /**
-         * Sets a devices ID to test ads interaction.
-         * You could pass null but it's better to set ids for all your test devices
-         * including emulators. for emulator just use the
-         *
-         * @see {AdRequest.DEVICE_ID_EMULATOR}
-         */
-        public Builder setTestDeviceIds(@NonNull String[] testDevicesId) {
-            adFetcher.getTestDeviceIds().clear();
-            for (String testId : testDevicesId)
-                adFetcher.addTestDeviceId(testId);
-            return this;
-        }
-
-        /**
-         * Sets a collection of ad presets ( object which contains unit ID and AdSize for banner).
-         * It works like cycling FIFO (first in = first out, cycling from end to start).
-         * Each ad block will get one from the queue.
-         * If the desired count of ad blocks is greater than this collection size
-         * then it will go again to the first item and iterate as much as it required.
-         * ID should be active, please check it in your Admob's account.
-         * Be careful: don't pass release unit id without setting the testDevicesId if you still haven't deployed a Release.
-         * Otherwise your Admob account could be banned
-         */
-        public Builder setAdPresets(@NonNull Collection<ExpressAdPreset> adPresets) {
-            adFetcher.setAdPresets(adPresets);
-            return this;
-        }
-
-        /**
-         * Sets a single unit ID for each ad block.
-         * If you are testing ads please don't set it to the release id
-         */
-        public Builder setSingleAdUnitId(@NonNull String admobUnitId) {
-            ExpressAdPreset adPreset = adFetcher.getAdPresetSingleOr(new ExpressAdPreset());
-            adPreset.setAdUnitId(admobUnitId);
-            adFetcher.setAdPresets(Collections.singletonList(adPreset));
-            return this;
-        }
-
-        /**
-         * Sets a single ad size for each ad block. By default it equals to AdSize(AdSize.FULL_WIDTH, 150);
-         */
-        public Builder setSingleAdSize(@NonNull AdSize adSize) {
-            ExpressAdPreset adPreset = adFetcher.getAdPresetSingleOr(new ExpressAdPreset(null, null));
-            adPreset.setAdSize(adSize);
-            adFetcher.setAdPresets(Collections.singletonList(adPreset));
-            return this;
-        }
-
-        /**
-         * Injects an object which incapsulates transformation of the source and ad blocks indices. You could override calculations
-         * by inheritance from {@link AdmobAdapterCalculator} class
-         */
-        public Builder setAdapterCalculator(@NonNull AdmobAdapterCalculator adapterCalculator) {
-            AdapterCalculator = adapterCalculator;
-            return setNoOfDataBetweenAds(DEFAULT_NO_OF_DATA_BETWEEN_ADS).setLimitOfAds(DEFAULT_LIMIT_OF_ADS);
-        }
-
-        /**
-         * Injects an object which incapsulates a wrapping logic for AdViews. You could inject your own implementation
-         * by inheritance from {@link AdViewWrappingStrategyBase} class
-         */
-        public Builder setAdViewWrappingStrategy(@NonNull AdViewWrappingStrategyBase adViewWrappingStrategy) {
-            AdViewWrappingStrategy = adViewWrappingStrategy;
-            return this;
-        }
-
-        /**
-         * Injects an object which incapsulates transformation of the source and ad blocks indices. You could override calculations
-         * by inheritance of {@link AdmobAdapterCalculator} class
-         */
-        public Builder setAdapterCalculator(@NonNull AdmobAdapterCalculator adapterCalculator, int noOfDataBetweenAds, int limitOfAds, int firstAdIndex) {
-            AdapterCalculator = adapterCalculator;
-            return setNoOfDataBetweenAds(noOfDataBetweenAds).setLimitOfAds(limitOfAds).setFirstAdIndex(firstAdIndex);
-        }
-
-        /**
-         * Sets underlying adapter with your data collection.
-         * If you want to inject your implementation of {@link AdmobAdapterCalculator} please set it before this call
-         */
-        public Builder setAdapter(BaseAdapter adapter) {
-            mAdapter = adapter;
-            mAdapter.registerDataSetObserver(new DataSetObserver() {
-                @Override
-                public void onChanged() {
-                    notifyDataSetChanged();
-                }
-
-                @Override
-                public void onInvalidated() {
-                    notifyDataSetInvalidated();
-                }
-            });
-            return this;
-        }
-
-        public AdmobExpressAdapterWrapper build() {
-            if (adFetcher.getAdPresetsCount() == 0)
-                adFetcher.setAdPresets(null);
-            prefetchAds(AdmobFetcherExpress.PREFETCHED_ADS_SIZE);
-            return AdmobExpressAdapterWrapper.this;
-        }
     }
 
 }
